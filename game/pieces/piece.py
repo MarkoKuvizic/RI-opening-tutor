@@ -22,7 +22,7 @@ class Piece():
         return 0 <= row < 8 and 0 <= col < 8
     
     def empty_or_can_eat(self, row, col, board):
-        return board[row][col] is None or board[row][col].color != self.color
+        return board[row][col] is None or (board[row][col].color != self.color and board[row][col].pgn_code !="K")
 
     def __str__(self):
         return f"{self.color} {self.__class__.__name__} ({self.pgn_code})"
