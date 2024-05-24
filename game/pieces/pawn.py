@@ -10,7 +10,7 @@ class Pawn(Piece):
     def get_legal_moves(self, board):
         legal_moves = []
         row, col = self.position
-        
+        print(self.direction)
         # Standard one square forward move
         forward_row = row + self.direction
         if 0 <= forward_row < 8 and board[forward_row][col] is None:
@@ -22,7 +22,6 @@ class Pawn(Piece):
                 two_squares_forward_row = row + 2 * self.direction
                 if 0 <= two_squares_forward_row < 8 and board[two_squares_forward_row][col] is None:
                     legal_moves.append([two_squares_forward_row, col])
-
         # Capture moves (diagonal forward)
         for dc in [-1, 1]:
             capture_row = row + self.direction

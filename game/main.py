@@ -12,9 +12,9 @@ ROWS, COLS = 8, 8  # Number of rows and columns
 SQUARE_SIZE = WIDTH // COLS  # Size of each square
 
 # Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-HIGHLIGHT = (0, 255, 0)  # Color for highlighting selected square
+WHITE = (0, 0, 255)
+BLACK = (255, 255, 0)
+HIGHLIGHT = (255, 0, 0)  # Color for highlighting selected square
 
 
 
@@ -68,10 +68,12 @@ def main():
                     if [row, col] in possible_moves:
                         board.execute_move(selected_piece, [row, col])
                     else:
-                        selected_piece = [row, col]
+                        if board.fields[row][col] and board.fields[row][col].color == board.player:
+                            selected_piece = [row, col]
                 else:
                     # Select the piece
-                    selected_piece = [row, col]
+                    if board.fields[row][col] and board.fields[row][col].color == board.player:
+                        selected_piece = [row, col]
                     
         draw_board(WIN)
         draw_pieces(WIN, board)

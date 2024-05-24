@@ -33,8 +33,8 @@ class Board():
         for row in self.fields:
             print(row)
     def execute_move(self, position, move, en_passant = False):
-        print("EXECUTE")
         piece = self.fields[position[0]][position[1]] 
+        piece.position = move
         self.fields[position[0]][position[1]] = None
         self.fields[move[0]][move[1]] = piece
         if (en_passant):
@@ -44,6 +44,7 @@ class Board():
                 piece.en_passantable = True
             else:
                 piece.en_passantable = False
+        self.change_player()
     def execute_en_passant(self, move):
         direction = 1
         if self.player == "white":
