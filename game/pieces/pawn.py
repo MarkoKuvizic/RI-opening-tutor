@@ -1,10 +1,11 @@
 from pieces.piece import Piece
-        
+from game.board import Board
 class Pawn(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.pgn_code = ''  # Pawns do not have a letter in PGN notation
         self.direction = -1 if color == 'white' else 1
+        self.en_passantable = False
 
     def get_legal_moves(self, board):
         legal_moves = []
@@ -31,3 +32,10 @@ class Pawn(Piece):
                     legal_moves.append([capture_row, capture_col])
 
         return legal_moves
+    def get_en_passant(self, board: Board):
+        pieces = [self.position - [0, 1], self.position + [0, 1]]
+        for piece in pieces:
+            p = board.fields[piece[0]][piece[1]]
+            if p is Pawn and p.en_passantable:
+                return piece
+    

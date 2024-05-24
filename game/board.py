@@ -2,6 +2,7 @@ from pieces import rook, king, pawn, knight, bishop, queen
 class Board():
     def __init__(self):
         self.fields = [[None for _ in range(8)] for _ in range(8)]  
+        self.player = "white"
     def setup(self):
         self.fields[0][0] = rook.Rook("black", [0, 0])
         self.fields[0][7] = rook.Rook("black", [0, 7])
@@ -31,7 +32,24 @@ class Board():
     def print_board(self):
         for row in self.fields:
             print(row)
-
-b = Board()
-b.setup()
-b.print_board()
+    def execute_move(self, position, move, en_passant = False):
+        piece = self.fields[position[0]][position[1]] 
+        self.fields[position[0]][position[1]] = None
+        self.fields[move[0]][move[1]] = piece
+        if (en_passant):
+            self.execute_en_passant(move)
+        if piece is pawn.Pawn:
+            if abs(move[0] - position[0]) > 1:
+                piece.en_passantable = True
+            else:
+                piece.en_passantable = False
+    def execute_en_passant(self, move):
+        direction = 1
+        if self.player == "white":
+            direction = -1
+        self.fields[move[0] - direction][move[1]] = None
+    def change_player(self):
+        if self.player == "white":
+            self.player = "black"
+            return
+        self.player = "white"
