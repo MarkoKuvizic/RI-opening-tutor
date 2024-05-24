@@ -44,6 +44,9 @@ def get_square_under_mouse():
     col = x // SQUARE_SIZE
     return row, col
 def main():
+    
+    board = Board()
+    board.setup()
     global selected_piece
     selected_piece = None
     possible_moves = []
@@ -62,17 +65,15 @@ def main():
                 row, col = get_square_under_mouse()
                 if selected_piece:
                     # Move the piece to the new location
-                    new_row, new_col = row, col
-                    board.fields[new_row][new_col] = board.fields[selected_piece[0]][selected_piece[1]]
-                    board.fields[selected_piece[0]][selected_piece[1]] = None
-                    selected_piece = None
+                    if [row, col] in possible_moves:
+                        board.execute_move(selected_piece, [row, col])
+                    else:
+                        selected_piece = [row, col]
                 else:
                     # Select the piece
-                    if board.fields[row][col] != "":
-                        selected_piece = [row, col]
+                    selected_piece = [row, col]
+                    
         draw_board(WIN)
-        board = Board()
-        board.setup()
         draw_pieces(WIN, board)
 
         if selected_piece:

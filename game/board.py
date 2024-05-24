@@ -33,6 +33,7 @@ class Board():
         for row in self.fields:
             print(row)
     def execute_move(self, position, move, en_passant = False):
+        print("EXECUTE")
         piece = self.fields[position[0]][position[1]] 
         self.fields[position[0]][position[1]] = None
         self.fields[move[0]][move[1]] = piece
