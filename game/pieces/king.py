@@ -10,7 +10,7 @@ class King(Piece):
         self.available_moves = [[row-1,col-1], [row-1,col],[row-1,col+1],[row,col-1],[row,col+1],[row+1,col-1],[row+1,col],[row+1,col+1]]
         
     def get_legal_moves(self, board):
-        legal_moves = super.get_legal_moves()
+        legal_moves = super().get_legal_moves(board)
 
         return [move for move in legal_moves if not self.move_checks(move, board)]
 

@@ -70,7 +70,6 @@ def main():
                     # Select the piece
                     if board.fields[row][col] != "":
                         selected_piece = [row, col]
-            print(selected_piece)
         draw_board(WIN)
         board = Board()
         board.setup()
@@ -81,7 +80,10 @@ def main():
             row, col = selected_piece
             pygame.draw.rect(WIN, HIGHLIGHT, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 3)
             piece = board.fields[selected_piece[0]][selected_piece[1]]
-            possible_moves = piece.get_legal_moves(board.fields)
+            possible_moves = []
+            if piece:
+                possible_moves = piece.get_legal_moves(board.fields)
+            
             for move in possible_moves:
                 [r, c] = move
                 pygame.draw.rect(WIN, HIGHLIGHT, (c * SQUARE_SIZE, r * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 3)

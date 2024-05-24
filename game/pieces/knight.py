@@ -5,4 +5,8 @@ class Knight(Piece):
         super().__init__(color, position)
         self.img = color[0] + "n"
         self.pgn_code = 'N'
-        self.available_moves = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+        
+        row = position[0]
+        col = position[1]
+        self.available_moves = [[row-2,col-1],[row-2,col+1],[row-1,col-2],[row-1,col+2],[row+1,col-2],[row+1,col+2],[row+2,col-1],[row+2,col+1]]
+        

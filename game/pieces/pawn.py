@@ -13,25 +13,26 @@ class Pawn(Piece):
         
         # Standard one square forward move
         forward_row = row + self.direction
-        if 0 <= forward_row < 8 and board[forward_row, col] is None:
-            legal_moves.append([forward_row, 0])
+        if 0 <= forward_row < 8 and board[forward_row][col] is None:
+            legal_moves.append([forward_row, col])
             
             # Two squares forward move if on the starting row
             starting_row = 6 if self.color == 'white' else 1
             if row == starting_row:
                 two_squares_forward_row = row + 2 * self.direction
-                if 0 <= two_squares_forward_row < 8 and board[two_squares_forward_row, col] is None:
-                    legal_moves.append([two_squares_forward_row, 0])
+                if 0 <= two_squares_forward_row < 8 and board[two_squares_forward_row][col] is None:
+                    legal_moves.append([two_squares_forward_row, col])
 
         # Capture moves (diagonal forward)
         for dc in [-1, 1]:
             capture_row = row + self.direction
             capture_col = col + dc
             if 0 <= capture_row < 8 and 0 <= capture_col < 8:
-                if board[capture_row, capture_col] is not None and board[capture_row, capture_col].color != self.color:
+                if board[capture_row][capture_col] is not None and board[capture_row][capture_col].color != self.color:
                     legal_moves.append([capture_row, capture_col])
 
         return legal_moves
+    
     def get_en_passant(self, board):
         pieces = [self.position - [0, 1], self.position + [0, 1]]
         for piece in pieces:
