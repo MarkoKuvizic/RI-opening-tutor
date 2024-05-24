@@ -4,6 +4,7 @@ class Rook(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.pgn_code = 'R'
+        self.img = color[0] + "r"
         self.available_moves = []
         
         self.available_moves.extend([[i, self.position[1]] for i in range(self.position[0] + 1, 8)])

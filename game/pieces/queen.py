@@ -3,7 +3,7 @@ class Queen(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.pgn_code = 'Q'
-
+        self.img = color[0] + "q"
         board_size = 8
         row = self.position[0]
         col = self.position[1]

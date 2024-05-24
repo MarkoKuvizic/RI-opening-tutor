@@ -1,9 +1,9 @@
-from piece import Piece
+from pieces.piece import Piece
 class Bishop(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.pgn_code = 'B'
-        
+        self.img = color[0] + "b"
         board_size = 8
         row = self.position[0]
         col = self.position[1]
