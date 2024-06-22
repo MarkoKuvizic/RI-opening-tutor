@@ -42,10 +42,11 @@ class Pawn(Piece):
         return legal_moves
     
     def get_en_passant(self, fields):
-        positions = [
-            [self.position[0], self.position[1] - 1],  # Left position
-            [self.position[0], self.position[1] + 1]   # Right position
-        ]
+        positions = []
+        left_col = self.position[1] - 1
+        right_col = self.position[1] + 1
+        if 0 <= left_col < 8: positions.append([self.position[0], left_col])
+        if 0 <= right_col < 8: positions.append([self.position[0], right_col])        
 
         for position in positions:
             p = fields[position[0]][position[1]]
