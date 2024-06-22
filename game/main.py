@@ -15,6 +15,8 @@ SQUARE_SIZE = WIDTH // COLS  # Size of each square
 WHITE = (0, 0, 255)
 BLACK = (255, 255, 0)
 HIGHLIGHT = (255, 0, 0)  # Color for highlighting selected square
+DARK_BROWN = (101, 67, 33)
+LIGHT_BROWN = (181, 101, 29)
 
 
 
@@ -27,9 +29,9 @@ def draw_board(win):
     for row in range(ROWS):
         for col in range(COLS):
             if (row + col) % 2 == 0:
-                color = WHITE
+                color = LIGHT_BROWN
             else:
-                color = BLACK
+                color = DARK_BROWN
             pygame.draw.rect(win, color, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 def draw_pieces(win, board):
     for row in range(ROWS):
@@ -43,8 +45,8 @@ def get_square_under_mouse():
     row = y // SQUARE_SIZE
     col = x // SQUARE_SIZE
     return row, col
+
 def main():
-    
     board = Board()
     board.setup()
     global selected_piece
@@ -81,7 +83,7 @@ def main():
         if selected_piece:
             # Highlight the selected piece
             row, col = selected_piece
-            pygame.draw.rect(WIN, HIGHLIGHT, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 3)
+            #pygame.draw.rect(WIN, HIGHLIGHT, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 3)
             piece = board.fields[selected_piece[0]][selected_piece[1]]
             possible_moves = []
             if piece:

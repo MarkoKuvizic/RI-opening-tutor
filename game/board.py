@@ -1,8 +1,10 @@
 from pieces import rook, king, pawn, knight, bishop, queen
 class Board():
+
     def __init__(self):
         self.fields = [[None for _ in range(8)] for _ in range(8)]  
         self.player = "white"
+
     def setup(self):
         self.fields[0][0] = rook.Rook("black", [0, 0])
         self.fields[0][7] = rook.Rook("black", [0, 7])
@@ -28,28 +30,37 @@ class Board():
         self.fields[1] = [pawn.Pawn("black", [1, j]) for j in range(8)]
         self.fields[6] = [pawn.Pawn("white", [6, j]) for j in range(8)]
 
-        pass
     def print_board(self):
         for row in self.fields:
             print(row)
-    def execute_move(self, position, move, en_passant = False):
-        piece = self.fields[position[0]][position[1]] 
+            
+    def execute_move(self, position, move):
+        self.reset_en_passant()
+        piece = self.fields[position[0]][position[1]]
+        # We need to check whether it's en-passant before we change the position
+        en_passant = isinstance(piece, pawn.Pawn) and piece.is_en_passant_move(self.fields, move)
         piece.position = move
         self.fields[position[0]][position[1]] = None
         self.fields[move[0]][move[1]] = piece
         if (en_passant):
             self.execute_en_passant(move)
-        if piece is pawn.Pawn:
+        if isinstance(piece, pawn.Pawn):
             if abs(move[0] - position[0]) > 1:
                 piece.en_passantable = True
             else:
                 piece.en_passantable = False
         self.change_player()
+
     def execute_en_passant(self, move):
-        direction = 1
-        if self.player == "white":
-            direction = -1
+        direction = -1 if self.player == "white" else 1
         self.fields[move[0] - direction][move[1]] = None
+
+    def reset_en_passant(self):
+        for row in self.fields:
+            for piece in row:
+                if isinstance(piece, pawn.Pawn):
+                    piece.en_passantable = False
+
     def change_player(self):
         if self.player == "white":
             self.player = "black"

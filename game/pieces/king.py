@@ -22,10 +22,11 @@ class King(Piece):
     def move_checks_from(self, move, board, piece:Piece):
         if move in piece.get_check_moves(board):
             return True
-    def move_checks(self, move, board):
-        for row in board.fields:
+        
+    def move_checks(self, move, fields):
+        for row in fields:
             for pos in row:
                 if pos and pos.color != self.color:
-                    if self.move_checks_from(move, board, pos):
+                    if self.move_checks_from(move, fields, pos):
                         return True
         return False
