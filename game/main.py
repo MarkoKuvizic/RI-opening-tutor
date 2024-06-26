@@ -57,18 +57,20 @@ def main():
 
     clock = pygame.time.Clock()
     run = True
+    checkmate = False
 
     while run:
         clock.tick(60)  # Limit the frame rate to 60 frames per second
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not checkmate:
                 row, col = get_square_under_mouse()
                 if selected_piece:
                     # Move the piece to the new location
                     if [row, col] in possible_moves:
-                        board.execute_move(selected_piece, [row, col])
+                        checkmate = board.execute_move(selected_piece, [row, col])
+                        selected_piece = None
                     else:
                         if board.fields[row][col] and board.fields[row][col].color == board.player:
                             selected_piece = [row, col]
@@ -95,6 +97,10 @@ def main():
 
 
         pygame.display.flip()  # Update the display
+
+        if checkmate:
+            print("Checkmate! Game over.")
+            run = False
 
     pygame.quit()
     sys.exit()

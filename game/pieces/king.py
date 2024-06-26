@@ -5,14 +5,23 @@ class King(Piece):
         super().__init__(color, position)
         self.pgn_code = 'K'
         self.img = color[0] + "k"
-        row = self.position[0]
-        col = self.position[1]
-        self.available_moves = [[row-1,col-1], [row-1,col],[row-1,col+1],[row,col-1],[row,col+1],[row+1,col-1],[row+1,col],[row+1,col+1]]
         
     def get_legal_moves(self, board):
-        legal_moves = super().get_legal_moves(board)
+        row, col = self.position
+        directions = [
+            (1, 0), (-1, 0), (0, 1), (0, -1),  # Vertical and horizontal
+            (1, 1), (1, -1), (-1, 1), (-1, -1)  # Diagonals
+        ]
+        legal_moves = []
 
-        return [move for move in legal_moves if not self.move_checks(move, board)]
+        for dr, dc in directions:
+            new_row, new_col = row + dr, col + dc
+            if 0 <= new_row < 8 and 0 <= new_col < 8:
+                if self.empty_or_can_eat(new_row, new_col, board) and not self.move_checks((new_row, new_col), board):
+                    legal_moves.append([new_row, new_col])
+
+        return legal_moves
+        
 
             
     def is_in_check_from(self, piece: Piece, board):

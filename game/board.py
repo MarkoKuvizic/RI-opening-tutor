@@ -66,6 +66,11 @@ class Board():
 
         self.change_player()
 
+        if self.is_checkmate():
+            return True
+        
+        return False
+
     def execute_en_passant(self, move):
         direction = -1 if self.player == "white" else 1
         self.fields[move[0] - direction][move[1]] = None
@@ -103,25 +108,38 @@ class Board():
         
         return False
     
-    def is_checkmate(self, color):
-        # Check if the king of the specified color has any legal moves or can be protected by other pieces
+    def is_checkmate(self):
+        if not self.is_king_in_check():
+            return False  # If the king is not in check, it's not checkmate
+
+        # Check if any legal move can prevent the checkmate
         for row in range(8):
             for col in range(8):
                 piece = self.fields[row][col]
-                if piece and piece.color == color:
+                if piece and piece.color == self.player:
                     legal_moves = piece.get_legal_moves(self.fields)
                     for move in legal_moves:
-                        # Simulate the move to see if it resolves the check
-                        current_position = piece.position
-                        self.execute_move(current_position, move)
-                        if not self.is_king_in_check(color):
-                            # Undo the move
-                            self.execute_move(move, current_position)
-                            return False
-                        # Undo the move
-                        self.execute_move(move, current_position)
-        
-        return True
+                        # Simulate the move
+                        original_position = piece.position
+                        destination_before_move = self.fields[move[0]][move[1]]
+                        self.fields[row][col] = None
+                        self.fields[move[0]][move[1]] = piece
+                        piece.position = move
+
+                        if not self.is_king_in_check():
+                            # Revert the move
+                            piece.position = original_position
+                            self.fields[row][col] = piece
+                            self.fields[move[0]][move[1]] = destination_before_move
+                            return False  # There is at least one legal move that prevents checkmate
+
+                        # Revert the move
+                        piece.position = original_position
+                        self.fields[row][col] = piece
+                        self.fields[move[0]][move[1]] = destination_before_move
+
+        return True  # No legal moves left to prevent checkmate
+
     
     def change_player(self):
         if self.player == "white":
