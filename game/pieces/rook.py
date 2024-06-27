@@ -5,6 +5,7 @@ class Rook(Piece):
         super().__init__(color, position)
         self.pgn_code = 'R'
         self.img = color[0] + "r"
+        self.has_moved = False
         self.available_moves = []
         
     def get_legal_moves(self, board):

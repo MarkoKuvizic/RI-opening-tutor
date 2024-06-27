@@ -37,6 +37,22 @@ class Board():
         print("MILICA")
         piece = self.fields[position[0]][position[1]]
 
+        # Check if the move is castling
+        if isinstance(piece, king.King) and abs(move[1] - position[1]) == 2:
+            # King-side castling
+            if move[1] > position[1]:
+                rook_position = (position[0], position[1] + 3)
+                new_rook_position = (position[0], position[1] + 1)
+            # Queen-side castling
+            else:
+                rook_position = (position[0], position[1] - 4)
+                new_rook_position = (position[0], position[1] - 1)
+            
+            castle_rook = self.fields[rook_position[0]][rook_position[1]]
+            self.fields[rook_position[0]][rook_position[1]] = None
+            self.fields[new_rook_position[0]][new_rook_position[1]] = castle_rook
+            castle_rook.position = new_rook_position
+
         # Execute the move
         piece.position = move
         self.fields[position[0]][position[1]] = None
@@ -64,6 +80,9 @@ class Board():
             else:
                 piece.en_passantable = False
 
+        if isinstance(piece, king.King) or isinstance(piece, rook.Rook):
+            piece.has_moved = True
+        
         self.change_player()
 
         if self.is_checkmate():
