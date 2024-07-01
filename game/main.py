@@ -109,9 +109,9 @@ def main():
             [Termination "Time forfeit"]
             """
 
-    moves = parse_pgn(pgn2)
+    moves = parse_pgn(pgn)
     move_delay = 500  # milliseconds between moves
-
+    matrices = []
     # print(moves)
     # s = input()
 
@@ -129,6 +129,7 @@ def main():
             possible_moves = selected_piece.get_legal_moves(board.fields)
             if move_coords in possible_moves:
                 checkmate = board.execute_move(selected_piece.position, move_coords)
+                matrices.append(board.make_matrix())
 
             pygame.time.wait(move_delay)
 
@@ -168,6 +169,10 @@ def main():
         if checkmate:
             print("Checkmate! Game over.")
             run = False
+
+            for matrix in matrices:
+                for row in matrix:
+                    print(row)
 
     pygame.quit()
     sys.exit()

@@ -248,4 +248,29 @@ class Board():
                 if piece and piece.color == self.player and isinstance(piece, king.King):
                     return piece
     
-        
+    def make_matrix(self):
+        matrix = [[0 for _ in range(8)] for _ in range(8)]
+        dec_val = {
+            'Pawn': 0.1,
+            'Knight': 0.2,
+            'Bishop': 0.3,
+            'Rook': 0.4,
+            'Queen': 0.5,
+            'King': 0.6,
+        }
+        for row in range(8):
+            for col in range(8):
+                piece = self.fields[row][col]
+
+                if piece == None:
+                    continue
+
+                piece_type = str(piece)
+                piece_type = piece_type.split()[1]
+
+                if piece.color == self.player:
+                    matrix[row][col] = dec_val[piece_type]
+                else:
+                    matrix[row][col] = -dec_val[piece_type]
+
+        return matrix
