@@ -1,4 +1,4 @@
-from pieces import rook, king, pawn, knight, bishop, queen
+from game.pieces import rook, king, pawn, knight, bishop, queen
 class Board():
     def __init__(self):
         self.fields = [[None for _ in range(8)] for _ in range(8)]  

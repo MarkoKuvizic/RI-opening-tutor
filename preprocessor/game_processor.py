@@ -37,10 +37,13 @@ class GameProcessor():
     
     def separate_game_into_positions(self):
         for game in self.games:
-            pgn = game["pgn"]
-            moves = [v.split(" ")[0:2] for v in pgn.split(". ")]
-            moves.remove(['1'])
-            game["moves"] = moves
+            try:
+                pgn = game["pgn"]
+                moves = [v.split(" ")[0:2] for v in pgn.split(". ")]
+                moves.remove(['1'])
+                game["moves"] = moves
+            except:
+                pass
 
 if __name__ == "__main__":
     processor = GameProcessor()
