@@ -9,15 +9,18 @@ from pprint import pprint
 
 processor = gameProcessor.GameProcessor()
 with open('D:\Marko\Downloads\lichess_db_standard_rated_2016-01.pgn/lichess_db_standard_rated_2016-01.pgn', 'r') as file:
-    for i in range(10000):
+    for i in range(15000):
         processor.read_until_string('Event', file)
 processor.filter_games()
 processor.separate_game_into_positions()
 positions = None
-positions = gameProcessor.ChessDataset(processor.games)
+train_size = round(len(processor.games) * 0.7)
+positions = gameProcessor.ChessDataset(processor.games[:train_size])
 confidences = None
-#confidences = gameProcessor.ConfidenceDataset(processor.games)
+confidences = gameProcessor.ConfidenceDataset(processor.games[:train_size])
 
+test_positions = gameProcessor.ChessDataset(processor.games[train_size:])
+test_confidences = gameProcessor.ChessDataset(processor.games[train_size:])
 num_epochs = 0
 batch_size = 32
 
@@ -49,15 +52,15 @@ for epoch in range(num_epochs):
 #torch.save(net.state_dict(), "move_prediction_model3.pth")
 print('Finished Training')
 
-from movePredictor import gameProcessor
-from movePredictor import movePredictorCnn
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
-import numpy as np
+
 
 model = movePredictorCnn.MoveCNN()
 model.load_state_dict(torch.load('move_prediction_model2.pth'))
 print(positions[3])
 print(model(positions[3]))
+
+with torch.no_grad():
+    for i in range(0, len(test_positions), batch_size):
+        predictions = net(test_positions.board_states[i:i+batch_size])
+        test_loss = criterion(predictions, test_confidences.board_states[i:i+batch_size])
+        print(f'Test Loss: {test_loss.item():.10f}')

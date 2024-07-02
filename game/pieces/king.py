@@ -25,7 +25,7 @@ class King(Piece):
         if move in piece.get_check_moves(board):
             return True
     def move_checks(self, move, board):
-        for row in board.fields:
+        for row in board:
             for pos in row:
                 if pos and pos.color != self.color:
                     if self.move_checks_from(move, board, pos):
