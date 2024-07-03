@@ -34,7 +34,7 @@ class Board():
         self.fields[6] = [pawn.Pawn("white", [6, j]) for j in range(8)]
             
     def execute_move(self, position, move):
-        print("MILICA")
+        # print("MILICA")
         piece = self.fields[position[0]][position[1]]
 
         # Check if the move is castling
@@ -53,26 +53,17 @@ class Board():
             self.fields[new_rook_position[0]][new_rook_position[1]] = castle_rook
             castle_rook.position = new_rook_position
 
-        # Execute the move
-        piece.position = move
-        self.fields[position[0]][position[1]] = None
-        destination_before_move = self.fields[move[0]][move[1]]
-        self.fields[move[0]][move[1]] = piece
-
-        # Check if the move puts the current player's king in check
-        if self.is_king_in_check():
-            # Revert the move
-            piece.position = position
-            self.fields[position[0]][position[1]] = piece
-            self.fields[move[0]][move[1]] = destination_before_move
-            return # Move would leave the king in check, so it's not allowed
-        
         self.reset_en_passant()
         # We need to check whether it's en-passant before we change the position
         en_passant = isinstance(piece, pawn.Pawn) and piece.is_en_passant_move(self.fields, move)
 
+        # Execute the move
+        piece.position = move
+        self.fields[position[0]][position[1]] = None
+        self.fields[move[0]][move[1]] = piece
+
         if (en_passant):
-            self.execute_en_passant(move)
+            self.execute_en_passant(move) # dodatno obrisi piona iza ovoga
 
         if isinstance(piece, pawn.Pawn):
             if abs(move[0] - position[0]) > 1:
@@ -85,11 +76,6 @@ class Board():
         
         self.change_player()
 
-        if self.is_checkmate():
-            return True
-        
-        return False
-
     def execute_en_passant(self, move):
         direction = -1 if self.player == "white" else 1
         self.fields[move[0] - direction][move[1]] = None
@@ -100,7 +86,15 @@ class Board():
                 if isinstance(piece, pawn.Pawn):
                     piece.en_passantable = False
 
-    def is_king_in_check(self):
+    def is_king_in_check(self, position, move):
+
+        # Simulate the move
+        original_piece = self.fields[position[0]][position[1]]
+        original_piece.position = move
+        self.fields[position[0]][position[1]] = None
+        destination_before_move = self.fields[move[0]][move[1]]
+        self.fields[move[0]][move[1]] = original_piece
+
         # Find the position of the king of the specified color
         king_position = None
         for row in range(8):
@@ -121,44 +115,46 @@ class Board():
             for col in range(8):
                 piece = self.fields[row][col]
                 if piece and piece.color == opponent_color:
-                    legal_moves = piece.get_legal_moves(self.fields)
-                    if king_position in legal_moves:
+                    attack_squares = piece.get_attack_squares(self.fields) # to avoid infine loop by calling get_legal_moves
+                    if king_position in attack_squares:
+                        # Revert the move
+                        original_piece.position = [position[0], position[1]]
+                        self.fields[position[0]][position[1]] = original_piece
+                        self.fields[move[0]][move[1]] = destination_before_move
                         return True
         
+        # Revert the move
+        original_piece.position = [position[0], position[1]]
+        self.fields[position[0]][position[1]] = original_piece
+        self.fields[move[0]][move[1]] = destination_before_move
         return False
     
-    def is_checkmate(self):
-        if not self.is_king_in_check():
-            return False  # If the king is not in check, it's not checkmate
-
-        # Check if any legal move can prevent the checkmate
+    def is_king_in_check_right_now(self):
+        # Find the position of the king of the specified color
+        king_position = None
         for row in range(8):
             for col in range(8):
                 piece = self.fields[row][col]
-                if piece and piece.color == self.player:
-                    legal_moves = piece.get_legal_moves(self.fields)
-                    for move in legal_moves:
-                        # Simulate the move
-                        original_position = piece.position
-                        destination_before_move = self.fields[move[0]][move[1]]
-                        self.fields[row][col] = None
-                        self.fields[move[0]][move[1]] = piece
-                        piece.position = move
+                if isinstance(piece, king.King) and piece.color == self.player:
+                    king_position = [row, col]
+                    break
+            if king_position:
+                break
+        
+        if not king_position:
+            return False  # King of the specified color not found (should not happen in a valid game)
 
-                        if not self.is_king_in_check():
-                            # Revert the move
-                            piece.position = original_position
-                            self.fields[row][col] = piece
-                            self.fields[move[0]][move[1]] = destination_before_move
-                            return False  # There is at least one legal move that prevents checkmate
-
-                        # Revert the move
-                        piece.position = original_position
-                        self.fields[row][col] = piece
-                        self.fields[move[0]][move[1]] = destination_before_move
-
-        return True  # No legal moves left to prevent checkmate
-
+        # Check if any opponent's pieces have legal moves that attack the king
+        opponent_color = "white" if self.player == "black" else "black"
+        for row in range(8):
+            for col in range(8):
+                piece = self.fields[row][col]
+                if piece and piece.color == opponent_color:
+                    attack_squares = piece.get_attack_squares(self.fields) # to avoid infine loop by calling get_legal_moves
+                    if king_position in attack_squares:
+                        return True
+                    
+        return False
     
     def change_player(self):
         if self.player == "white":
@@ -173,7 +169,10 @@ class Board():
         piece = None
         move_cords = None
 
-        if move[-1] in '+#':
+        if '=' in move:
+            return None, None
+
+        if move[-1] in '+#' and move[-2] != 'O':
             move_cords = [row_dict[move[-2]], col_dict[move[-3]]]
             move = move[0:-1]
 
@@ -185,8 +184,8 @@ class Board():
 
         elif move[0] in 'KO': # za rokade isto kralj
             piece = self.get_king()
-            if move == 'O-O': move_cords = [piece.position[0], piece.position[1] + 2]
-            elif move == 'O-O-O': move_cords = [piece.position[0], piece.position[1] - 2]
+            if move.startswith('O-O-O') : move_cords = [piece.position[0], piece.position[1] - 2]
+            elif move.startswith('O-O'): move_cords = [piece.position[0], piece.position[1] + 2]
 
         else:
             piece = self.get_piece(move, move_cords)
@@ -198,14 +197,14 @@ class Board():
             for row in range(8):
                 for col in range(8):
                     piece = self.fields[row][col]
-                    if piece and piece.color == self.player and isinstance(piece, pawn.Pawn) and move_cords in piece.get_legal_moves(self.fields):
+                    if piece and piece.color == self.player and isinstance(piece, pawn.Pawn) and move_cords in piece.get_legal_moves(self):
                         return piece
         else:
             col_dict = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
             col = col_dict[move[0]]
             for row in range(8):
                 piece = self.fields[row][col]
-                if piece and piece.color == self.player and isinstance(piece, pawn.Pawn) and move_cords in piece.get_legal_moves(self.fields):
+                if piece and piece.color == self.player and isinstance(piece, pawn.Pawn) and move_cords in piece.get_legal_moves(self):
                     return piece
             
     def get_piece(self, move, move_cords):
@@ -214,7 +213,7 @@ class Board():
         piece_dict = {'N': knight.Knight, 'B': bishop.Bishop, 'R': rook.Rook, 'Q': queen.Queen}
 
         def is_valid_piece(piece):
-            return piece and piece.color == self.player and isinstance(piece, piece_dict[move[0]]) and move_cords in piece.get_legal_moves(self.fields)
+            return piece and piece.color == self.player and isinstance(piece, piece_dict[move[0]]) and move_cords in piece.get_legal_moves(self)
 
         def find_piece(move_cords, col=None, row=None):
             for r in range(8):
