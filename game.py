@@ -113,7 +113,7 @@ def main():
     text = []
         
     for p in predictions:
-        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.4f}")
+        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.6f}")
     while run:
         clock.tick(60)  # Limit the frame rate to 60 frames per second
         
@@ -138,7 +138,7 @@ def main():
         
                     text = []
                     for p in predictions:
-                        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.4f}")
+                        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.6f}")
                 else:
                     # Select the piece
                     if board.fields[row][col] and board.fields[row][col].color == board.player:

@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 from game.pieces import rook, king, pawn, knight, bishop, queen
-=======
 from typing import List
 
-from game.pieces import rook, king, pawn, knight, bishop, queen
-
->>>>>>> main
 class Board():
 
     def __init__(self):
