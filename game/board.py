@@ -1,6 +1,6 @@
 from typing import List
 
-from pieces import rook, king, pawn, knight, bishop, queen
+from game.pieces import rook, king, pawn, knight, bishop, queen
 
 class Board():
 

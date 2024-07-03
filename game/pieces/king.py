@@ -1,5 +1,5 @@
-from pieces.piece import Piece
-from pieces.bishop import Bishop
+from game.pieces.piece import Piece
+from game.pieces.bishop import Bishop
 
 class King(Piece):
     def __init__(self, color, position):

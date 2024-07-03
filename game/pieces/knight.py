@@ -1,4 +1,4 @@
-from pieces.piece import Piece
+from game.pieces.piece import Piece
 from typing import List, Optional
 
 class Knight(Piece):
