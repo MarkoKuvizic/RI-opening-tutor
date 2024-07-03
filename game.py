@@ -7,6 +7,7 @@ from movePredictor import movePredictorCnn
 from movePredictor import gameProcessor
 import torch
 import numpy as np
+from game.model import ChessCNN
 
 # Initialize Pygame
 pygame.init()
@@ -24,12 +25,33 @@ HIGHLIGHT = (255, 0, 0)  # Color for highlighting selected square
 DARK_BROWN = (101, 67, 33)
 LIGHT_BROWN = (181, 101, 29)
 
+OPENINGS = ["Scandinavian Defense: Mieses-Kotroc Variation",
+'Owen Defense',
+"Queen's Pawn",
+'Modern Defense',
+'Scandinavian Defense',
+'Sicilian Defense: Bowdler Attack',
+'Caro-Kann Defense',
+'Horwitz Defense',
+'Sicilian Defense',
+'Old Benoni Defense',
+'French Defense: Knight Variation',
+'Indian Game',
+"Van't Kruijs Opening",
+"Mieses Opening"]
+
+text = []
+max_index = 0
+
 pygame.font.init()
 FONT_SIZE = 30
 font = pygame.font.SysFont(None, FONT_SIZE)
 
 model = movePredictorCnn.MoveCNN()
 model.load_state_dict(torch.load('move_prediction_model2.pth'))
+
+opening_classification_model = ChessCNN(len(OPENINGS))
+opening_classification_model.load_state_dict(torch.load('chess_model3.pth'))
 
 
 # Set up the display
@@ -51,6 +73,11 @@ def get_predictions(board: Board, N = 3):
     state = torch.tensor(state, dtype=torch.float32)
     confidences = model(state[0])
     confidences = confidences.view(8, 8).tolist()
+    opening_val = opening_classification_model(state[0])
+    global max_index
+    max_index = torch.argmax(opening_val)
+    global text
+    text.append(f"{OPENINGS[max_index]}")
     elements = []
     for row_index, row in enumerate(confidences):
         for col_index, element in enumerate(row):
@@ -60,9 +87,9 @@ def get_predictions(board: Board, N = 3):
     print(elements)
     for element in elements:
         piece = board.fields[element["x"]][element["y"]]
-        if not piece or len(piece.get_legal_moves(board.fields)) == 0 or piece.color != board.player:
+        if not piece or len(piece.get_legal_moves(board)) == 0 or piece.color != board.player:
             continue
-        for (dX, dY) in piece.get_legal_moves(board.fields):
+        for (dX, dY) in piece.get_legal_moves(board):
             
             moves.append({
                 'x' : dX,
@@ -110,8 +137,8 @@ def main():
     checkmate = False
     predictions = get_predictions(board)
         
-    text = []
-        
+    global text
+    global max_index
     for p in predictions:
         text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.6f}")
     while run:
@@ -137,6 +164,7 @@ def main():
                     predictions = get_predictions(board)
         
                     text = []
+                    text.append(OPENINGS[max_index])
                     for p in predictions:
                         text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.6f}")
                 else:
@@ -156,7 +184,7 @@ def main():
             piece = board.fields[selected_piece[0]][selected_piece[1]]
             possible_moves = []
             if piece:
-                possible_moves = piece.get_legal_moves(board.fields)
+                possible_moves = piece.get_legal_moves(board)
             
             for move in possible_moves:
                 [r, c] = move

@@ -1,10 +1,4 @@
-from train import train, evaluate
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-from model import ChessCNN
-from dataset import ChessDataset
-from game_processor import GameProcessor
+from game.game_processor import GameProcessor
 
 if __name__ == "__main__":
     # Define hyperparameters
@@ -77,38 +71,3 @@ if __name__ == "__main__":
     with open("hi.txt", "w") as file:
         for opening in top100:
             file.write(opening + '\n')
-
-    x = input()
-
-    train_dataset = ChessDataset(train_games, top100, max_moves_per_game)
-    val_dataset = ChessDataset(val_games, top100, max_moves_per_game)
-
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-
-
-    num_classes = len(top100)
-    model = ChessCNN(num_classes)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
-    train(model, train_loader, criterion, optimizer, num_epochs)
-
-    #torch.save(model.state_dict(), 'chess_model66.pth')
-
-    val_accuracy, val_loss = evaluate(model, val_loader, criterion)
-    print(f'Validation Accuracy: {val_accuracy:.4f}, Validation Loss: {val_loss:.4f}')
-
-    # print(val_games[5])
-    # print(len(val_dataset))
-    # model.load_state_dict(torch.load('chess_model3.pth'))
-    # # print(val_games[5])
-    # board_state, label = val_dataset[82]
-    # torch.set_printoptions(threshold=10000)
-    # # print(model(board_state))
-    # tensor2 = model(board_state)
-    # max_index = torch.argmax(tensor2)
-    # print(tensor2)
-    # print(tensor2.shape)
-    # dic = train_dataset.opening_to_label
-    # print({i for i in dic if dic[i]==max_index})

@@ -1,5 +1,6 @@
 from game.pieces import rook, king, pawn, knight, bishop, queen
 from typing import List
+from copy import deepcopy
 
 class Board():
 
@@ -93,19 +94,19 @@ class Board():
                     piece.en_passantable = False
 
     def is_king_in_check(self, position, move):
-
+        board_copy = deepcopy(self.fields)
         # Simulate the move
-        original_piece = self.fields[position[0]][position[1]]
+        original_piece = board_copy[position[0]][position[1]]
         original_piece.position = move
-        self.fields[position[0]][position[1]] = None
-        destination_before_move = self.fields[move[0]][move[1]]
-        self.fields[move[0]][move[1]] = original_piece
+        board_copy[position[0]][position[1]] = None
+        destination_before_move = board_copy[move[0]][move[1]]
+        board_copy[move[0]][move[1]] = original_piece
 
         # Find the position of the king of the specified color
         king_position = None
         for row in range(8):
             for col in range(8):
-                piece = self.fields[row][col]
+                piece = board_copy[row][col]
                 if isinstance(piece, king.King) and piece.color == self.player:
                     king_position = [row, col]
                     break
@@ -119,20 +120,20 @@ class Board():
         opponent_color = "white" if self.player == "black" else "black"
         for row in range(8):
             for col in range(8):
-                piece = self.fields[row][col]
+                piece = board_copy[row][col]
                 if piece and piece.color == opponent_color:
-                    attack_squares = piece.get_attack_squares(self.fields) # to avoid infine loop by calling get_legal_moves
+                    attack_squares = piece.get_attack_squares(board_copy) # to avoid infine loop by calling get_legal_moves
                     if king_position in attack_squares:
-                        # Revert the move
-                        original_piece.position = [position[0], position[1]]
-                        self.fields[position[0]][position[1]] = original_piece
-                        self.fields[move[0]][move[1]] = destination_before_move
+                        # # Revert the move
+                        # original_piece.position = [position[0], position[1]]
+                        # self.fields[position[0]][position[1]] = original_piece
+                        # self.fields[move[0]][move[1]] = destination_before_move
                         return True
         
-        # Revert the move
-        original_piece.position = [position[0], position[1]]
-        self.fields[position[0]][position[1]] = original_piece
-        self.fields[move[0]][move[1]] = destination_before_move
+        # # Revert the move
+        # original_piece.position = [position[0], position[1]]
+        # self.fields[position[0]][position[1]] = original_piece
+        # self.fields[move[0]][move[1]] = destination_before_move
         return False
     
     def is_king_in_check_right_now(self):
