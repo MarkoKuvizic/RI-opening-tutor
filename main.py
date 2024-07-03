@@ -55,7 +55,7 @@ print('Finished Training')
 
 
 model = movePredictorCnn.MoveCNN()
-model.load_state_dict(torch.load('move_prediction_model2.pth'))
+model.load_state_dict(torch.load('move_prediction_model3.pth'))
 print(positions[3])
 print(model(positions[3]))
 

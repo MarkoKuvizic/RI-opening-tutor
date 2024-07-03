@@ -38,7 +38,7 @@ def pgn_to_matrices(pgn, max_moves):
     return board_matrices
 
 class ChessDataset(Dataset):
-    def __init__(self, games, max_moves = 10):
+    def __init__(self, games, max_moves = 20):
         self.games = games
         self.max_moves = max_moves
         self.board_states = []

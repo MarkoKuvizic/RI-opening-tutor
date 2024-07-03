@@ -3,7 +3,7 @@ class Pawn(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.img = color[0] + "p"
-        self.pgn_code = ''  # Pawns do not have a letter in PGN notation
+        self.pgn_code = ''
         self.direction = -1 if color == 'white' else 1
         self.en_passantable = False
 

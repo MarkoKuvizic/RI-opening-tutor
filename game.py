@@ -37,6 +37,7 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Chess Board")
 
 def draw_text(win, text_list):
+
     # Starting position for the text
     x = 800 + 10
     y = 10
@@ -94,6 +95,8 @@ def get_square_under_mouse():
     return row, col
 
 def main():
+
+
     board = Board()
     board.setup()
     global selected_piece
@@ -110,7 +113,7 @@ def main():
     text = []
         
     for p in predictions:
-        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}")
+        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.4f}")
     while run:
         clock.tick(60)  # Limit the frame rate to 60 frames per second
         
@@ -135,7 +138,7 @@ def main():
         
                     text = []
                     for p in predictions:
-                        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}")
+                        text.append(f"{p['pgn']} {labels[p['y']]}{8 - p['x']}  confidence: {p['confidence']:.4f}")
                 else:
                     # Select the piece
                     if board.fields[row][col] and board.fields[row][col].color == board.player:
@@ -143,6 +146,7 @@ def main():
                     
         draw_board(WIN)
         draw_pieces(WIN, board)
+
         draw_text(WIN, text)
 
         if selected_piece:
@@ -157,7 +161,6 @@ def main():
             for move in possible_moves:
                 [r, c] = move
                 pygame.draw.rect(WIN, HIGHLIGHT, (c * SQUARE_SIZE, r * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 3)
-
 
         pygame.display.flip()  # Update the display
 
