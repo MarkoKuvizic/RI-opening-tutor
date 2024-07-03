@@ -20,21 +20,21 @@ class King(Piece):
         for dr, dc in directions:
             new_row, new_col = row + dr, col + dc
             if 0 <= new_row < 8 and 0 <= new_col < 8:
-                if self.empty_or_can_eat(new_row, new_col, board) and not self.move_checks([new_row, new_col], board):
+                if self.empty_or_can_eat(new_row, new_col, board.fields) and not self.move_checks([new_row, new_col], board.fields):
                     legal_moves.append([new_row, new_col])
 
         # Castling
         if not self.has_moved:
             # King-side castling
-            if self.can_castle(board, row, col, row, col + 3):
+            if self.can_castle(board.fields, row, col, row, col + 3):
                 legal_moves.append([row, col + 2])
             # Queen-side castling
-            if self.can_castle(board, row, col, row, col - 4):
+            if self.can_castle(board.fields, row, col, row, col - 4):
                 legal_moves.append([row, col - 2])
 
         return legal_moves
     
-    def get_taken_up_fields(self, board):
+    def get_attack_squares(self, fields):
         row, col = self.position
         directions = [
             (1, 0), (-1, 0), (0, 1), (0, -1),  # Vertical and horizontal
@@ -45,7 +45,7 @@ class King(Piece):
         for dr, dc in directions:
             new_row, new_col = row + dr, col + dc
             if 0 <= new_row < 8 and 0 <= new_col < 8:
-                if self.empty_or_can_eat(new_row, new_col, board):
+                if self.empty_or_can_eat(new_row, new_col, fields):
                     legal_moves.append([new_row, new_col])
 
         return legal_moves
@@ -63,6 +63,15 @@ class King(Piece):
                 return False
         
         return True
+        
+    # def move_checks(self, move, fields):
+    #     for row in fields:
+    #         for pos in row:
+    #             if pos and pos.color != self.color:
+    #                 if self.move_checks_from(move, fields, pos):
+    #                     return True
+    #     return False
+
             
     def is_in_check_from(self, piece: Piece, board):
         if self.position in piece.get_check_moves(board):
@@ -77,9 +86,6 @@ class King(Piece):
             for col in range(8):
                 piece = fields[row][col]
                 if piece and piece.color != self.color:
-                    if not isinstance(piece, King):
-                        legal_moves = piece.get_legal_moves(fields)
-                    else:
-                        legal_moves = piece.get_taken_up_fields(fields) # kad je drugi kralj ne mora kod njega da dodaje rokadu u legal moves jer je to kao potez unapred
-                    if kings_move in legal_moves:
+                    attack_squares = piece.get_attack_squares(fields) # kad je drugi kralj ne mora kod njega da dodaje rokadu u legal moves jer je to kao potez unapred
+                    if kings_move in attack_squares:
                         return True

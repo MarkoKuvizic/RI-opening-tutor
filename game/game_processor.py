@@ -33,20 +33,39 @@ class GameProcessor():
         self.games = [game for game in self.games if self.filter_game(game)]
 
     def filter_game(self, game):
-        return game["termination"].lower() != "abandoned" and (game["whiteElo"] + game["blackElo"])/2 > 1500
+        try:
+            return game["termination"].lower() != "abandoned" and (game["whiteElo"] + game["blackElo"])/2 > 1500 and '{' not in game["pgn"]
+        except:
+            return False
     
     def separate_game_into_positions(self):
         for game in self.games:
-            pgn = game["pgn"]
-            moves = [v.split(" ")[0:2] for v in pgn.split(". ")]
-            moves.remove(['1'])
-            game["moves"] = moves
+            try:
+                pgn = game["pgn"]
+                moves = [v.split(" ")[0:2] for v in pgn.split(". ")]
+                moves.remove(['1'])
+                game["moves"] = moves
+            except:
+                pass
+
 
 if __name__ == "__main__":
     processor = GameProcessor()
     with open('C:/Users/milic/Desktop/RI/biii/lichess_db_standard_rated_2016-01.pgn', 'r') as file:
-        for i in range(10):
+        for i in range(200000):
             processor.read_until_string('Event', file)
     processor.filter_games()
     processor.separate_game_into_positions()
-    pprint(processor.games)
+    openings = {}
+    ind = 0
+    for game in processor.games:
+        if game['opening'] not in openings:
+            openings[game['opening']] = ind
+            ind+=1
+
+    # with open('C:/Users/milic/Desktop/RI/biii/openings.txt', 'w') as hi:
+    for opening in openings.items():
+        print(opening)
+
+    print(len(openings))
+
