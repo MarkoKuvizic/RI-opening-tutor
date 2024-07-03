@@ -1,5 +1,6 @@
-from pieces.piece import Piece
-from pieces.bishop import Bishop
+from game.pieces.piece import Piece
+from game.pieces.bishop import Bishop
+
 
 class King(Piece):
     def __init__(self, color, position):
@@ -70,6 +71,15 @@ class King(Piece):
     #                 if self.move_checks_from(move, fields, pos):
     #                     return True
     #     return False
+
+            
+    def is_in_check_from(self, piece: Piece, board):
+        if self.position in piece.get_check_moves(board):
+            return True
+        
+    def move_checks_from(self, move, board, piece:Piece):
+        if move in piece.get_check_moves(board):
+            return True
 
     def move_checks(self, kings_move, fields):
         for row in range(8):

@@ -48,6 +48,7 @@ class GameProcessor():
             except:
                 pass
 
+
 if __name__ == "__main__":
     processor = GameProcessor()
     with open('C:/Users/milic/Desktop/RI/biii/lichess_db_standard_rated_2016-01.pgn', 'r') as file:
@@ -67,3 +68,4 @@ if __name__ == "__main__":
         print(opening)
 
     print(len(openings))
+

@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     train(model, train_loader, criterion, optimizer, num_epochs)
 
-    torch.save(model.state_dict(), 'chess_model3.pth')
+    #torch.save(model.state_dict(), 'chess_model66.pth')
 
     val_accuracy, val_loss = evaluate(model, val_loader, criterion)
     print(f'Validation Accuracy: {val_accuracy:.4f}, Validation Loss: {val_loss:.4f}')

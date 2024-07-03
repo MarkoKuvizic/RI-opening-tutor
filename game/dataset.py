@@ -38,6 +38,7 @@ def pgn_to_matrices(pgn, max_moves):
     # board_matrices = board_matrices[:64 * 2 * max_moves]  # Crop or pad as necessary
     # board_matrices += [0.0] * (64 * 2 * max_moves - len(board_matrices))  # Pad with zeros if necessary
 
+
     return board_matrices
 
 class ChessDataset(Dataset):
@@ -85,9 +86,3 @@ class ChessDataset(Dataset):
     # processor.filter_games()
     # processor.separate_game_into_positions()
     # pprint(processor.games)
-
-    # ds = ChessDataset(processor.games)
-    # # print(ds.opening_to_label)
-    # for i in range(len(ds)):
-    #     board_states, label = ds[i]
-    #     print(len(board_states))

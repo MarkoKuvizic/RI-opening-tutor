@@ -1,7 +1,7 @@
 import pygame
 import sys
-from images import PIECES
-from board import Board
+from game.images import PIECES
+from game.board import Board
 
 # Initialize Pygame
 pygame.init()

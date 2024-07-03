@@ -1,6 +1,5 @@
+from game.pieces import rook, king, pawn, knight, bishop, queen
 from typing import List
-
-from pieces import rook, king, pawn, knight, bishop, queen
 
 class Board():
 
@@ -36,6 +35,13 @@ class Board():
     def execute_move(self, position, move):
         # print("MILICA")
         piece = self.fields[position[0]][position[1]]
+
+
+    def print_board(self):
+        for row in self.fields:
+            print(row)
+    def execute_move(self, position, move, en_passant = False):
+        piece = self.fields[position[0]][position[1]] 
 
         # Check if the move is castling
         if isinstance(piece, king.King) and abs(move[1] - position[1]) == 2:
@@ -273,3 +279,4 @@ class Board():
                     matrix[row][col] = -dec_val[piece_type]
 
         return matrix
+

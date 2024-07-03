@@ -1,4 +1,5 @@
-from pieces.piece import Piece
+from game.pieces.piece import Piece
+from typing import List, Optional
 
 class Knight(Piece):
     def __init__(self, color, position):
@@ -14,7 +15,7 @@ class Knight(Piece):
             [row+1, col-2], [row+1, col+2], 
             [row+2, col-1], [row+2, col+1]
         ]
-        
+
         legal_moves = []
         for move in potential_moves:
             r, c = move
