@@ -1,7 +1,11 @@
+<<<<<<< HEAD
+from game.pieces import rook, king, pawn, knight, bishop, queen
+=======
 from typing import List
 
 from game.pieces import rook, king, pawn, knight, bishop, queen
 
+>>>>>>> main
 class Board():
 
     def __init__(self):
@@ -37,6 +41,13 @@ class Board():
         print("MILICA")
         piece = self.fields[position[0]][position[1]]
 
+
+    def print_board(self):
+        for row in self.fields:
+            print(row)
+    def execute_move(self, position, move, en_passant = False):
+        piece = self.fields[position[0]][position[1]] 
+
         # Check if the move is castling
         if isinstance(piece, king.King) and abs(move[1] - position[1]) == 2:
             # King-side castling
@@ -53,7 +64,7 @@ class Board():
             self.fields[new_rook_position[0]][new_rook_position[1]] = castle_rook
             castle_rook.position = new_rook_position
 
-        # Execute the move
+
         piece.position = move
         self.fields[position[0]][position[1]] = None
         destination_before_move = self.fields[move[0]][move[1]]
@@ -248,4 +259,30 @@ class Board():
                 if piece and piece.color == self.player and isinstance(piece, king.King):
                     return piece
     
-        
+
+    def make_matrix(self):
+        matrix = [[0 for _ in range(8)] for _ in range(8)]
+        dec_val = {
+            'Pawn': 0.1,
+            'Knight': 0.2,
+            'Bishop': 0.3,
+            'Rook': 0.4,
+            'Queen': 0.5,
+            'King': 0.6,
+        }
+        for row in range(8):
+            for col in range(8):
+                piece = self.fields[row][col]
+
+                if piece == None:
+                    continue
+
+                piece_type = str(piece)
+                piece_type = piece_type.split()[1]
+
+                if piece.color == self.player:
+                    matrix[row][col] = dec_val[piece_type]
+                else:
+                    matrix[row][col] = -dec_val[piece_type]
+
+        return matrix
