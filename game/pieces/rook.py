@@ -5,6 +5,7 @@ class Rook(Piece):
         super().__init__(color, position)
         self.pgn_code = 'R'
         self.img = color[0] + "r"
+        self.has_moved = False
         self.available_moves = []
         
     def get_legal_moves(self, board):
@@ -26,10 +27,12 @@ class Rook(Piece):
         axes.append(sorted(axis4, key = lambda x: abs(x[0] - row) + abs(x[1] - col)))
 
         for axis in axes:
-            print(axis)
+            # print(axis)
             for move in axis:
                 if self.empty_or_can_eat(move[0], move[1], board):
                     legal_moves.append(move)
+                    if board[move[0]][move[1]] is not None:
+                        break  # Stop further moves in this direction if a piece is encountered
                 else:
                     break
         return legal_moves

@@ -52,6 +52,8 @@ class Queen(Piece):
             for move in axis:
                 if self.empty_or_can_eat(move[0], move[1], board):
                     legal_moves.append(move)
+                    if board[move[0]][move[1]] is not None:
+                        break  # Stop further moves in this direction if a piece is encountered
                 else:
                     break
         return legal_moves
